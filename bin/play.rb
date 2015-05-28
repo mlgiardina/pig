@@ -29,7 +29,6 @@ puts "Playing a game of #{game_class}"
 game = game_class.new
 #       ^ game class is either Pig or Hog. The constant of a class can be assigned to a local variable and be used like any other local variable
 
-game.get_players
-
+game.start_game
 game.play_round until game.winner
 puts "#{game.winner} wins!"

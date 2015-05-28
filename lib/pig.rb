@@ -22,13 +22,13 @@ class Pig
       get_players
     elsif response > 0
       @loaded_save = SavedGame.find(response)
-      split_scores = @saved_game.serialized_scores.split("~")
-      split_names = @saved_game.serialized_names.split("~")
+      split_scores = @loaded_save.scores.split("~")
+      split_names = @loaded_save.names.split("~")
       split_names.each do |name|
         @players.push(Player.new(name))
       end
       @players.each_with_index do |player, index|
-        player.score = split_scores[index]
+        player.score = split_scores[index].to_i
       end
     end
   end
@@ -81,12 +81,15 @@ class Pig
         if gets.chomp.downcase == "n"
           puts "Stopping with #{turn_total} for the turn."
           player.score += turn_total
+          save_game!
           return
         end
       end
-      save_game!
     end
   end
+
+#-As of right now, if we load a saved game and then quit,
+#-it makes a new save rather than overwriting the current save.
 
   def save_game!
     serialized_scores = ""
@@ -97,8 +100,17 @@ class Pig
     end
     @saved_game.scores = serialized_scores
     @saved_game.names = serialized_names
-    @saved_game.save_game
+    @saved_game.save!
   end
+
+  def end_game
+  end
+
+  trap(:INT) {
+    puts "\nSaving and quitting..."
+    sleep 0.5
+    exit
+  }
 end
 
 game = Pig.new
