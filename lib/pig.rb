@@ -1,4 +1,5 @@
 require_relative './player'
+require_relative 'saved_game'
 
 class Pig
   def initialize
