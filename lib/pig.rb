@@ -15,15 +15,18 @@ class Pig
     play_or_leaderboard_response = gets.chomp.downcase
     if play_or_leaderboard_response == "leaderboard"
       system("clear")
+
       leaderboard = Top.order(wins: :desc)
       puts "---Leaderboard---"
       leaderboard.each { |player| puts player.name + ": " + player.wins.to_s }
+
       puts "Would you like to exit?"
       leave_choice = gets.chomp.downcase
-      if leave_choice == "y" || "yes"
+      if leave_choice == "yes"
         exit
       end
     end
+
     puts "You have #{SavedGame.count} saved games."
     puts "(0) New Game"
     SavedGame.all.each do |save|
@@ -31,7 +34,6 @@ class Pig
     end
 
     response = gets.chomp.to_i
-
     if response == 0
       get_players
     elsif response > 0
