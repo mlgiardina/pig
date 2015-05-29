@@ -106,7 +106,9 @@ class Pig
   end
 
   def end_game
-    Top.find_or_create_by(name: @players.first.name).wins + 1
+    win_record = Top.find_by(name: @players.first.name)
+    win_record.wins = win_record.wins += 1
+    win_record.save!
     if @loaded_save
       @loaded_save.destroy
     end
