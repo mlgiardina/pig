@@ -1,6 +1,7 @@
 require_relative '../db/setup'
 require_relative './player'
 require_relative './saved_game'
+require_relative './top'
 
 class Pig
   def initialize
@@ -42,6 +43,7 @@ class Pig
         return
       else
         @players.push Player.new(input)
+        Top.find_or_create_by(name: input, wins: 0)
       end
     end
   end
@@ -64,7 +66,8 @@ class Pig
 
   def winner
     if @players.length == 1
-      @players.first.name
+      @players.first
+      end_game
     end
   end
 
@@ -81,7 +84,6 @@ class Pig
         if gets.chomp.downcase == "n"
           puts "Stopping with #{turn_total} for the turn."
           player.score += turn_total
-          save_game!
           return
         end
       end
@@ -104,17 +106,24 @@ class Pig
   end
 
   def end_game
+    Top.find_or_create_by(name: @players.first.name).wins + 1
+    if @loaded_save
+      @loaded_save.destroy
+    end
+    puts "#{@players.first.name} wins!"
+    exit
   end
 
   trap(:INT) {
     puts "\nSaving and quitting..."
+    save_game!
     sleep 0.5
     exit
   }
 end
 
-game = Pig.new
-game.start_game
-game.play_round until game.winner
-puts "#{game.winner} wins!"
+# game = Pig.new
+# game.start_game
+# game.play_round until game.winner
+# puts "#{game.winner.name} wins!"
 

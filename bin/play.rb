@@ -32,3 +32,4 @@ game = game_class.new
 game.start_game
 game.play_round until game.winner
 puts "#{game.winner} wins!"
+game.end_game
