@@ -11,6 +11,19 @@ class Pig
   end
 
   def start_game
+    puts "Welcome to Pig! Would you like to play a game or see the leaderboard? (play or leaderboard)"
+    play_or_leaderboard_response = gets.chomp.downcase
+    if play_or_leaderboard_response == "leaderboard"
+      system("clear")
+      leaderboard = Top.order(wins: :desc)
+      puts "---Leaderboard---"
+      leaderboard.each { |player| puts player.name + ": " + player.wins.to_s }
+      puts "Would you like to exit?"
+      leave_choice = gets.chomp.downcase
+      if leave_choice == "y" || "yes"
+        exit
+      end
+    end
     puts "You have #{SavedGame.count} saved games."
     puts "(0) New Game"
     SavedGame.all.each do |save|
@@ -84,6 +97,7 @@ class Pig
         if gets.chomp.downcase == "n"
           puts "Stopping with #{turn_total} for the turn."
           player.score += turn_total
+          save_game!
           return
         end
       end
@@ -118,14 +132,9 @@ class Pig
 
   trap(:INT) {
     puts "\nSaving and quitting..."
-    save_game!
     sleep 0.5
     exit
   }
 end
 
-# game = Pig.new
-# game.start_game
-# game.play_round until game.winner
-# puts "#{game.winner.name} wins!"
 
