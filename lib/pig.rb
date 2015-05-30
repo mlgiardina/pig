@@ -58,7 +58,11 @@ class Pig
         return
       else
         @players.push Player.new(input)
-        Top.find_or_create_by(name: input, wins: 0)
+        win_tracker = Top.find_or_create_by(name: input)
+        if win_tracker.win == nil
+          win_tracker.win = win_tracker.wins.to_i
+          win_tracker.save!
+        end
       end
     end
   end
@@ -128,6 +132,7 @@ class Pig
     if @loaded_save
       @loaded_save.destroy
     end
+    @saved_game.destroy
     puts "#{@players.first.name} wins!"
     exit
   end
